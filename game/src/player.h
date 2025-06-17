@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 
+#include "game_object.h"
+
 typedef enum {
     IDLE,
     RUNNING,
@@ -15,17 +17,18 @@ typedef enum {
 typedef struct {
     Camera3D camera;
     PlayerState state;
-
-    // Transform
-    Vector3 position;
-    float rotation;
+    GameObject object;
 
     // Combat
     float health;
     float energy;
 } Player;
 
-void InitPlayer(Player *p, Vector3 sp); // Initialize player struct
-void UpdatePlayer(Player *p);           // Initialize player struct
+// Initialize player struct
+void InitPlayer(Player *p, Vector3 sp);
+// Update player collisions against all gameObjects
+void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCount);
+// Update player camera
+void UpdatePlayerCamera(Player *p);
 
 #endif
