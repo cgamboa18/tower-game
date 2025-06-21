@@ -1,13 +1,14 @@
 #include "raylib.h"
+#include "raymath.h"
 
 #include "game_object.h"
 #include "collision.h"
 
 void InitGameObject(GameObject *go) {
-    go->position = (Vector3){0.0f, 0.0f, 0.0f};
-    go->rotation = (Vector3){0.0f, 0.0f, 0.0f};
+    go->transform = (Transform){0};
+    go->transform.scale = (Vector3) {1.0f, 1.0f, 1.0f};
 
-    go->model = (Model){0};
+    go->model = LoadModel("resources/icosahedron.obj"); 
     go->collisionBodyCount = 0;
     for (int i = 0; i < MAX_COLLISION_BODIES; i++) {
         go->collisionBodies[i].mode = COLLIDE_BODY;
@@ -21,4 +22,20 @@ void InitGameObject(GameObject *go) {
             };
         }
     }
-} 
+}
+
+void DrawGameObject(GameObject go) {
+    Vector3 rotationAxis;
+    float rotationAngle;
+    QuaternionToAxisAngle(go.transform.rotation, &rotationAxis, &rotationAngle);
+
+    DrawModelEx(
+        go.model,
+        go.transform.translation,
+        rotationAxis,
+        rotationAngle,
+        go.transform.scale,
+        GREEN 
+    );
+        
+}

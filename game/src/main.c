@@ -38,7 +38,8 @@ int main() {
 // Update and draw game frame
 static void UpdateDrawFrame(void) {
     // Update
-    UpdatePlayer(&player);
+    UpdatePlayerAction(&player);
+    UpdatePlayerCamera(&player);
 
     // Draw
     BeginDrawing();
@@ -46,7 +47,8 @@ static void UpdateDrawFrame(void) {
         ClearBackground(RAYWHITE);
 
         BeginMode3D(player.camera);
-            DrawCubeWires(originPosition, 2.0f, 2.0f, 2.0f, MAROON);
+            DrawGameObject(player.object);
+            //DrawModelWires(player.object.model, originPosition, 1, BLACK);
             DrawGrid(10, 1.0f);
 
         EndMode3D();

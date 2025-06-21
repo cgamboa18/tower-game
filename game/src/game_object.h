@@ -8,14 +8,17 @@
 #define MAX_COLLISION_BODIES 8
 
 typedef struct {
+    Transform transform;
     Model model;
     CollisionBody collisionBodies[MAX_COLLISION_BODIES];
     int collisionBodyCount;
-    Vector3 position;
-    Vector3 rotation; // Roll, Pitch, Yaw
 } GameObject;
 
 // Initiallize game object
 void InitGameObject(GameObject *go);
+// Draw 3D game object to camera view
+void DrawGameObject(GameObject go);
+// Convert transform struct to transformation matrix
+Matrix ToMatrix(Transform t);
 
 #endif

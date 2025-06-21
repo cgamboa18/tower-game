@@ -18,6 +18,20 @@ void InitPlayer(Player *p, Vector3 sp) {
     p->energy = 100;
 }
 
+void UpdatePlayerAction(Player *p) {
+    if (IsKeyDown(KEY_W)) {
+        p->object.transform.translation.x += 0.01;
+    }
+
+    if (IsKeyDown(KEY_S)) {
+        p->object.transform.translation.y += 0.01;
+    }
+
+    if (IsKeyDown(KEY_A)) {
+        p->object.transform.translation.z += 0.01;
+    }
+}
+
 void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCount) {
     GameObject *playerGameObject = &p->object;
 

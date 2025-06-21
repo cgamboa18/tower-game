@@ -26,6 +26,8 @@ typedef struct {
 
 // Initialize player struct
 void InitPlayer(Player *p, Vector3 sp);
+// Main player update function
+void UpdatePlayerAction(Player *p);
 // Update player collisions against all gameObjects
 void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCount);
 // Update player camera
