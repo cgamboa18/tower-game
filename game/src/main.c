@@ -1,6 +1,5 @@
 #include "raylib.h"
 
-// Local headers
 #include "player.h"
 
 #define MAX_GAME_OBJECTS 128

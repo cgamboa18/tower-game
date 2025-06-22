@@ -7,6 +7,7 @@
 void InitGameObject(GameObject *go) {
     go->transform = (Transform){0};
     go->transform.scale = (Vector3) {1.0f, 1.0f, 1.0f};
+    go->velocity = (Vector3) {0};
 
     go->model = LoadModel("resources/icosahedron.obj"); 
     go->collisionBodyCount = 0;
@@ -24,18 +25,27 @@ void InitGameObject(GameObject *go) {
     }
 }
 
+void UpdateGameObjectMotion(GameObject *go) {
+    // Update position based on velocity
+    go->transform.translation.x += go->velocity.x;
+    go->transform.translation.y += go->velocity.y;
+    go->transform.translation.z += go->velocity.z;
+}
+
 void DrawGameObject(GameObject go) {
+    // Get DrawModel rotation arguments
     Vector3 rotationAxis;
     float rotationAngle;
     QuaternionToAxisAngle(go.transform.rotation, &rotationAxis, &rotationAngle);
 
+    // Draw model to screen based on game object position
     DrawModelEx(
         go.model,
         go.transform.translation,
         rotationAxis,
         rotationAngle,
         go.transform.scale,
-        GREEN 
+        BLUE 
     );
         
 }

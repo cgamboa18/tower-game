@@ -9,6 +9,8 @@
 
 typedef struct {
     Transform transform;
+    Vector3 velocity;
+
     Model model;
     CollisionBody collisionBodies[MAX_COLLISION_BODIES];
     int collisionBodyCount;
@@ -16,9 +18,9 @@ typedef struct {
 
 // Initiallize game object
 void InitGameObject(GameObject *go);
+// Update game object motion
+void UpdateGameObjectMotion(GameObject *go);
 // Draw 3D game object to camera view
 void DrawGameObject(GameObject go);
-// Convert transform struct to transformation matrix
-Matrix ToMatrix(Transform t);
 
 #endif
