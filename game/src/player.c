@@ -86,16 +86,20 @@ void UpdatePlayerCamera(Player *p) {
     float desiredDistance = 10.0f;
     float currentDistance = Vector3Distance(cam->position, cam->target);
 
-    if (fabs(desiredDistance - currentDistance) >= 0.01) {
-        // Move the camera position by the target delta to preserve relative orbit position
-        Vector3 targetDelta = Vector3Subtract(cam->target, lastTarget);
-        cam->position = Vector3Add(cam->position, targetDelta);
+    Vector3 targetDelta = Vector3Subtract(cam->target, lastTarget);
+    Vector3 toTarget = Vector3Subtract(cam->target, cam->position);
+    // Perpedicular movement
+    float deltaDot = Vector3DotProduct(Vector3Normalize(targetDelta), Vector3Normalize(toTarget));
 
-        // Snap camera to orbital
-        currentDistance = Vector3Distance(cam->position, cam->target);
-        float adjust = desiredDistance - currentDistance;
-        CameraMoveToTarget(cam, adjust);
+    if (Vector3LengthSqr(targetDelta) > 0.0001f && fabs(deltaDot) > 0.1f) {
+        // Move the camera position by the target delta to preserve relative orbit position
+        cam->position = Vector3Add(cam->position, targetDelta);
     }
+
+    // Snap camera to orbital
+    currentDistance = Vector3Distance(cam->position, cam->target);
+    float adjust = desiredDistance - currentDistance;
+    CameraMoveToTarget(cam, adjust);
 
     // Handle mouse input for orbiting
     Vector2 mouseDelta = GetMouseDelta();
