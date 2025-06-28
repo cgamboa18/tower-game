@@ -39,7 +39,7 @@ void DrawGameObject(GameObject go) {
     QuaternionToAxisAngle(go.transform.rotation, &rotationAxis, &rotationAngle);
 
     // Draw model to screen based on game object position
-    DrawModelEx(
+    DrawModelWiresEx(
         go.model,
         go.transform.translation,
         rotationAxis,

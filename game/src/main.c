@@ -21,7 +21,8 @@ int main() {
     InitWindow(screenWidth, screenHeight, "raylib");
     InitPlayer(&player, originPosition);
 
-    SetTargetFPS(-1);
+    SetTargetFPS(60);
+    DisableCursor();
 
     // Main game loop
     while (!WindowShouldClose()) {
@@ -38,7 +39,6 @@ int main() {
 static void UpdateDrawFrame(void) {
     // Update
     UpdatePlayerAction(&player);
-    UpdatePlayerCamera(&player);
 
     // Draw
     BeginDrawing();
@@ -47,12 +47,10 @@ static void UpdateDrawFrame(void) {
 
         BeginMode3D(player.camera);
             DrawGameObject(player.object);
-            //DrawModelWires(player.object.model, originPosition, 1, BLACK);
             DrawGrid(10, 1.0f);
 
         EndMode3D();
 
-        DrawText("This is a raylib example", 10, 40, 20, DARKGRAY);
         DrawFPS(10, 10);
 
     EndDrawing();

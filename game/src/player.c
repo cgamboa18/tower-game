@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
+#include "rcamera.h"
 
 #include "player.h"
 #include "game_object.h"
@@ -19,14 +20,6 @@ void InitPlayer(Player *p, Vector3 sp) {
     p->energy = 100;
 }
 
-void UpdatePlayerState(Player *p, Vector3 moveDirection) {
-    if (!Vector3Equals(moveDirection, Vector3Zero())) {
-        p->state = RUNNING;
-    } else {
-        p->state = IDLE;
-    }
-}
-
 void UpdatePlayerAction(Player *p) {
     Vector3 *playerVelocity = &p->object.velocity;
     Vector3 moveDirection = GetMoveDirection(p->camera);
@@ -37,11 +30,14 @@ void UpdatePlayerAction(Player *p) {
     // Determine current player state
     UpdatePlayerState(p, moveDirection);
 
+    // Update camera position
+    UpdatePlayerCamera(p);
+
     // Control player behavior based on player state
     switch (p->state) {
         case RUNNING:
-            playerVelocity->x = moveDirection.x * 0.1;
-            playerVelocity->z = moveDirection.z * 0.1;
+            playerVelocity->x = moveDirection.x * 10 * GetFrameTime();
+            playerVelocity->z = moveDirection.z * 10 * GetFrameTime();
             break;
         case IDLE:
             playerVelocity->x = 0;
@@ -72,8 +68,44 @@ void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCo
     }
 }
 
+void UpdatePlayerState(Player *p, Vector3 moveDirection) {
+    if (!Vector3Equals(moveDirection, Vector3Zero())) {
+        p->state = RUNNING;
+    } else {
+        p->state = IDLE;
+    }
+}
+
 void UpdatePlayerCamera(Player *p) {
-    UpdateCamera(&p->camera, CAMERA_ORBITAL);
+    Camera3D *cam = &p->camera;
+
+    // Set camera target to player's position
+    Vector3 lastTarget = cam->target;
+    cam->target = p->object.transform.translation;
+
+    float desiredDistance = 10.0f;
+    float currentDistance = Vector3Distance(cam->position, cam->target);
+
+    if (fabs(desiredDistance - currentDistance) >= 0.01) {
+        // Move the camera position by the target delta to preserve relative orbit position
+        Vector3 targetDelta = Vector3Subtract(cam->target, lastTarget);
+        cam->position = Vector3Add(cam->position, targetDelta);
+
+        // Snap camera to orbital
+        currentDistance = Vector3Distance(cam->position, cam->target);
+        float adjust = desiredDistance - currentDistance;
+        CameraMoveToTarget(cam, adjust);
+    }
+
+    // Handle mouse input for orbiting
+    Vector2 mouseDelta = GetMouseDelta();
+    float sensitivity = 0.15f;
+    // Orbit around the new target position using yaw and pitch
+    CameraYaw(cam, -mouseDelta.x * sensitivity * DEG2RAD, true);                     // Horizontal orbit
+    CameraPitch(cam, -mouseDelta.y * sensitivity * DEG2RAD, true, true, false);      // Vertical orbit
+    
+    // Debug text
+    DrawText(TextFormat("Cam Pos: %.2f %.2f %.2f", cam->position.x, cam->position.y, cam->position.z), 10, 40, 10, DARKGRAY);
 }
 
 Vector3 GetMoveDirection(Camera c) {
