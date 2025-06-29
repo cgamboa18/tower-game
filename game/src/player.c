@@ -91,7 +91,7 @@ void UpdatePlayerCamera(Player *p) {
     // Perpedicular movement
     float deltaDot = Vector3DotProduct(Vector3Normalize(targetDelta), Vector3Normalize(toTarget));
 
-    if (Vector3LengthSqr(targetDelta) > 0.0001f && fabs(deltaDot) > 0.1f) {
+    if (Vector3LengthSqr(targetDelta) > 0.0001f && fabs(deltaDot) > 0.5f) {
         // Move the camera position by the target delta to preserve relative orbit position
         cam->position = Vector3Add(cam->position, targetDelta);
     }

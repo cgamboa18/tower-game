@@ -1,12 +1,14 @@
 #include "raylib.h"
 
 #include "player.h"
+#include "enemy.h"
 
 #define MAX_GAME_OBJECTS 128
 
 // Local Variables Definition
 GameObject gameObjects[MAX_GAME_OBJECTS];
 Player player = {0};
+Enemy enemy = {0};
 Vector3 originPosition = {0};
 
 // Local Functions Declaration
@@ -20,6 +22,7 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "raylib");
     InitPlayer(&player, originPosition);
+    InitEnemy(&enemy, originPosition);
 
     SetTargetFPS(60);
     DisableCursor();
@@ -47,6 +50,7 @@ static void UpdateDrawFrame(void) {
 
         BeginMode3D(player.camera);
             DrawGameObject(player.object);
+            DrawGameObject(enemy.object);
             DrawGrid(10, 1.0f);
 
         EndMode3D();
