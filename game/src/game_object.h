@@ -21,6 +21,6 @@ void InitGameObject(GameObject *go);
 // Update game object motion
 void UpdateGameObjectMotion(GameObject *go);
 // Draw 3D game object to camera view
-void DrawGameObject(GameObject go);
+void DrawGameObject(const GameObject *go);
 
 #endif

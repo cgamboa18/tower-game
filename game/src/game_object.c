@@ -32,19 +32,19 @@ void UpdateGameObjectMotion(GameObject *go) {
     go->transform.translation.z += go->velocity.z;
 }
 
-void DrawGameObject(GameObject go) {
+void DrawGameObject(const GameObject *go) {
     // Get DrawModel rotation arguments
     Vector3 rotationAxis;
     float rotationAngle;
-    QuaternionToAxisAngle(go.transform.rotation, &rotationAxis, &rotationAngle);
+    QuaternionToAxisAngle(go->transform.rotation, &rotationAxis, &rotationAngle);
 
     // Draw model to screen based on game object position
     DrawModelWiresEx(
-        go.model,
-        go.transform.translation,
+        go->model,
+        go->transform.translation,
         rotationAxis,
         rotationAngle,
-        go.transform.scale,
+        go->transform.scale,
         BLUE 
     );
         
