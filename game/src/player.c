@@ -5,16 +5,16 @@
 #include "player.h"
 #include "game_object.h"
 
-void InitPlayer(Player *p, Vector3 sp) {
+void InitPlayer(Player *p, Vector3 spawnPoint) {
     p->camera = (Camera3D) {
-        .position = (Vector3){sp.x + 0.0f, sp.y + 5.0f, sp.z + 10.0f},
-        .target = sp,
+        .position = (Vector3){spawnPoint.x + 0.0f, spawnPoint.y + 5.0f, spawnPoint.z + 10.0f},
+        .target = spawnPoint,
         .up = (Vector3){0.0f, 1.0f, 0.0f},
         .fovy = 60.0f,
         .projection = CAMERA_PERSPECTIVE
     }; 
     p->state = IDLE;
-    InitGameObject(&p->object);
+    InitGameObject(&p->object, spawnPoint);
 
     p->health = 100;
     p->energy = 100;

@@ -25,7 +25,7 @@ typedef struct {
 } Player;
 
 // Initialize player struct
-void InitPlayer(Player *p, Vector3 sp);
+void InitPlayer(Player *p, Vector3 spawnPoint);
 // Update player actions based on state
 void UpdatePlayerAction(Player *p);
 // Main player update function

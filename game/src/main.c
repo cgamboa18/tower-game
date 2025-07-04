@@ -1,6 +1,10 @@
 #include <stddef.h>
 #include "raylib.h"
 
+// Header Dependancies
+#define CJSON_IMPLEMENTATION
+#include "cJSON-1.7.18/cJSON.h"
+
 #include "scene.h"
 #include "player.h"
 #include "enemy.h"
@@ -20,7 +24,7 @@ int main() {
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib");
-    LoadScene(&gameScene, "PATH", true);
+    LoadScene(&gameScene, "resources/scene.json", false);
 
     SetTargetFPS(60);
     DisableCursor();
@@ -39,14 +43,14 @@ int main() {
 // Update and draw game frame
 static void UpdateDrawFrame(void) {
     // Update
-    UpdatePlayerAction(&gameScene.player); // LOOK AT THIS )))))))))))))))))))))))))
+    UpdatePlayerAction(&gameScene.player);
 
     // Draw
     BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
-        BeginMode3D(gameScene.player.camera); // THIS TOO ))))))))))))))))))))))))))))))))))
+        BeginMode3D(gameScene.player.camera);
             DrawSceneGameObjects(&gameScene);
             DrawGrid(10, 1.0f);
 

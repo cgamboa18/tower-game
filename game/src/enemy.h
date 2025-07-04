@@ -20,6 +20,6 @@ typedef struct {
 } Enemy;
 
 // Initiallize game object
-void InitEnemy(Enemy *e, Vector3 sp);
+void InitEnemy(Enemy *e, Vector3 spawnPoint);
 
 #endif

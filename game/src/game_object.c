@@ -4,9 +4,11 @@
 #include "game_object.h"
 #include "collision.h"
 
-void InitGameObject(GameObject *go) {
+void InitGameObject(GameObject *go, Vector3 spawnPoint) {
     go->transform = (Transform){0};
     go->transform.scale = (Vector3) {1.0f, 1.0f, 1.0f};
+    go->transform.translation = spawnPoint;
+
     go->velocity = (Vector3) {0};
 
     go->model = LoadModel("resources/icosahedron.obj"); 

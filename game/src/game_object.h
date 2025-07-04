@@ -17,7 +17,7 @@ typedef struct {
 } GameObject;
 
 // Initiallize game object
-void InitGameObject(GameObject *go);
+void InitGameObject(GameObject *go, Vector3 spawnPoint);
 // Update game object motion
 void UpdateGameObjectMotion(GameObject *go);
 // Draw 3D game object to camera view
