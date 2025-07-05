@@ -31,6 +31,9 @@ int main() {
 
     // Main game loop
     while (!WindowShouldClose()) {
+        // Update
+        UpdateScene(&gameScene);
+
         UpdateDrawFrame();
     }
 
@@ -42,10 +45,6 @@ int main() {
 
 // Update and draw game frame
 static void UpdateDrawFrame(void) {
-    // Update
-    UpdatePlayerAction(&gameScene.player);
-
-    // Draw
     BeginDrawing();
 
         ClearBackground(RAYWHITE);

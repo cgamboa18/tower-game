@@ -4,7 +4,7 @@
 #include "raylib.h"
 
 #include "player.h"
-#include "Enemy.h"
+#include "enemy.h"
 #include "game_object.h"
 
 #define MAX_ENEMIES 64 
@@ -19,6 +19,8 @@ typedef struct {
     int gameObjectCount;
 } Scene;
 
+// Update all elements of the scene
+void UpdateScene(Scene *s);
 // Load scene from JSON file
 void LoadScene(Scene *s, const char *fileName, bool preservePlayer);
 // Draw all of the scenes gameObjects to the screen

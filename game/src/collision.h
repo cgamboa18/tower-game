@@ -31,11 +31,16 @@ typedef enum {
 } CollisionMode;
 
 typedef struct {
+    Transform transform;
     CollisionMode mode;
     CollisionShape shapes[MAX_SHAPES];
     int shapeCount;
 } CollisionBody;
 
+// Initiallize collision body
+void InitCollisionBody(CollisionBody *cb, Vector3 spawnPoint);
+// Reposition collision body in reference to new point
+CollisionBody GetCollisionBodyTransformed(CollisionBody cb);
 // Check for collision between two collision bodies
 bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2);
 

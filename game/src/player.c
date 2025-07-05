@@ -15,17 +15,25 @@ void InitPlayer(Player *p, Vector3 spawnPoint) {
     }; 
     p->state = IDLE;
     InitGameObject(&p->object, spawnPoint);
+    p->object.id = PLAYER_ID;
 
     p->health = 100;
     p->energy = 100;
 }
 
+void UpdatePlayer(Player *p, GameObject **gameObjects, int gameObjectCount) {
+    // Update physics collisions for game object
+    UpdateGameObjectSceneCollisions(&p->object, gameObjects, gameObjectCount, &PlayerCollisionCallback, p);
+    // Update physics motion for game object
+    UpdateGameObjectMotion(&p->object);
+
+    // Update the players actions
+    UpdatePlayerAction(p);
+}
+
 void UpdatePlayerAction(Player *p) {
     Vector3 *playerVelocity = &p->object.velocity;
     Vector3 moveDirection = GetMoveDirection(p->camera);
-
-    // Update physics motion for game object
-    UpdateGameObjectMotion(&p->object);
 
     // Determine current player state
     UpdatePlayerState(p, moveDirection);
@@ -43,28 +51,6 @@ void UpdatePlayerAction(Player *p) {
             playerVelocity->x = 0;
             playerVelocity->z = 0; 
             break;
-    }
-}
-
-void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCount) {
-    GameObject *playerGameObject = &p->object;
-
-    for (int i = 0; i < gameObjectCount; i++) {
-        if (playerGameObject == gameObjects[i])
-            continue;
-
-        // Check collision between player bodies and other game object bodies
-        for (int j = 0; j < playerGameObject->collisionBodyCount; j++) { 
-            CollisionBody playerBody = playerGameObject->collisionBodies[j];
-
-            for (int k = 0; k < gameObjects[i]->collisionBodyCount; k++) {
-                CollisionBody otherBody = gameObjects[i]->collisionBodies[k];
-
-                if (playerBody.mode == COLLIDE_DETECT) {
-                    // CheckCollisionBodies(playerBody, otherBody);
-                }
-            }
-        }
     }
 }
 
@@ -140,4 +126,10 @@ Vector3 GetMoveDirection(Camera c) {
         moveDirection = Vector3Normalize(moveDirection);
 
     return moveDirection;
+}
+
+void PlayerCollisionCallback(GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx) {
+    Player *p = (Player *) ctx;
+
+    DrawText(TextFormat("Collision callback: %d", p->object.id), 10, 60, 10, DARKGRAY);
 }

@@ -7,7 +7,15 @@
 
 #define MAX_COLLISION_BODIES 8
 
+typedef enum {
+    NONE_ID,
+    PLAYER_ID,
+    BEAST_ID
+} GameObjectId;
+
 typedef struct {
+    GameObjectId id;
+
     Transform transform;
     Vector3 velocity;
 
@@ -22,5 +30,7 @@ void InitGameObject(GameObject *go, Vector3 spawnPoint);
 void UpdateGameObjectMotion(GameObject *go);
 // Draw 3D game object to camera view
 void DrawGameObject(const GameObject *go);
+// Update collisions for game object using parent's collision callback function (ctx contains parent pointer context for callback updates) 
+void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(GameObject*, GameObject*, int, int, void*), void *ctx);
 
 #endif

@@ -7,6 +7,10 @@
 #include "scene.h"
 #include "game_object.h"
 
+void UpdateScene(Scene *s) {
+    UpdatePlayer(&s->player, s->gameObjects, s->gameObjectCount);
+}
+
 void LoadScene(Scene *s, const char *fileName, bool preservePlayer) {
     // Open JSON file
     FILE *file = fopen(fileName, "rb");

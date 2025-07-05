@@ -5,6 +5,7 @@
 #include "collision.h"
 
 void InitGameObject(GameObject *go, Vector3 spawnPoint) {
+    go->id = NONE_ID;
     go->transform = (Transform){0};
     go->transform.scale = (Vector3) {1.0f, 1.0f, 1.0f};
     go->transform.translation = spawnPoint;
@@ -13,18 +14,18 @@ void InitGameObject(GameObject *go, Vector3 spawnPoint) {
 
     go->model = LoadModel("resources/icosahedron.obj"); 
     go->collisionBodyCount = 0;
-    for (int i = 0; i < MAX_COLLISION_BODIES; i++) {
-        go->collisionBodies[i].mode = COLLIDE_BODY;
-        go->collisionBodies[i].shapeCount = 0;
 
-        for (int j = 0; j < MAX_SHAPES; j++) {
-            go->collisionBodies[i].shapes[j].type = SHAPE_BOX;
-            go->collisionBodies[i].shapes[j].box = (BoundingBox){
-                (Vector3){0.0f, 0.0f, 0.0f},
-                (Vector3){0.0f, 0.0f, 0.0f}
-            };
-        }
+    for (int i = 0; i < MAX_COLLISION_BODIES; i++) {
+        InitCollisionBody(&go->collisionBodies[i], spawnPoint);
     }
+
+    /* TEST ***********************/
+    go->collisionBodyCount = 1; // TEST
+    go->collisionBodies[0].mode = COLLIDE_BODY;
+    go->collisionBodies[0].shapeCount = 1;
+    go->collisionBodies[0].shapes[0].type = SHAPE_BOX; 
+    go->collisionBodies[0].shapes[0].box = GetModelBoundingBox(go->model);
+    /* TEST ***********************/
 }
 
 void UpdateGameObjectMotion(GameObject *go) {
@@ -32,6 +33,11 @@ void UpdateGameObjectMotion(GameObject *go) {
     go->transform.translation.x += go->velocity.x;
     go->transform.translation.y += go->velocity.y;
     go->transform.translation.z += go->velocity.z;
+
+    // Update collision body transforms to match game object
+    for (int i = 0; i < go->collisionBodyCount; i++){
+        go->collisionBodies[i].transform = go->transform;
+    }
 }
 
 void DrawGameObject(const GameObject *go) {
@@ -49,5 +55,29 @@ void DrawGameObject(const GameObject *go) {
         go->transform.scale,
         BLUE 
     );
+
+    if (true)
+    DrawBoundingBox(GetCollisionBodyTransformed(go->collisionBodies[0]).shapes[0].box, RED);
         
+}
+
+void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(GameObject*, GameObject*, int, int, void*), void *ctx) {
+    for (int i = 0; i < gameObjectCount; i++) {
+        if (go == gameObjects[i])
+            continue;
+
+        // Check collision between player bodies and other game object bodies
+        // GetCollisionBodyTransformed must be used to adjust for gameObject positions
+        for (int j = 0; j < go->collisionBodyCount; j++) { 
+            CollisionBody body1 = GetCollisionBodyTransformed(go->collisionBodies[j]);
+
+            for (int k = 0; k < gameObjects[i]->collisionBodyCount; k++) {
+                CollisionBody body2 = GetCollisionBodyTransformed(gameObjects[i]->collisionBodies[k]);
+
+                if (CheckCollisionBodies(body1, body2)) {
+                    CollisionCallback(go, gameObjects[i], j, k, ctx); 
+                }
+            }
+        }
+    }
 }

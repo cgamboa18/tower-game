@@ -10,6 +10,7 @@
 	},
 	"files.associations": {
 		"player.h": "c",
-		"stddef.h": "c"
+		"stddef.h": "c",
+		"game_object.h": "c"
 	}
 }

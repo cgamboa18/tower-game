@@ -26,6 +26,8 @@ typedef struct {
 
 // Initialize player struct
 void InitPlayer(Player *p, Vector3 spawnPoint);
+// Update player main 
+void UpdatePlayer(Player *p, GameObject **gameObjects, int gameObjectCount);
 // Update player actions based on state
 void UpdatePlayerAction(Player *p);
 // Main player update function
@@ -36,5 +38,7 @@ void UpdatePlayerCollision(Player *p, GameObject **gameObjects, int gameObjectCo
 void UpdatePlayerCamera(Player *p);
 // Returns input movement direction as Vector3
 Vector3 GetMoveDirection(Camera c);
+// Callback function for registering collisions between player game objects
+void PlayerCollisionCallback(GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx);
 
 #endif
