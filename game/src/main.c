@@ -38,6 +38,7 @@ int main() {
     }
 
     // De-Initialization
+    // Unload modedls and stuff
     CloseWindow(); // Close window and OpenGL context
 
     return 0;

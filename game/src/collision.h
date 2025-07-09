@@ -8,7 +8,8 @@
 // Determines type of shape
 typedef enum {
     SHAPE_BOX,      // Bounding box (min, max)
-    SHAPE_SPHERE    // Sphere (center, radius)
+    SHAPE_SPHERE,   // Sphere (center, radius)
+    SHAPE_MESH      // Mesh (Mesh)
 } CollisionShapeType;
 
 typedef struct {
@@ -19,6 +20,7 @@ typedef struct {
             Vector3 center;
             float radius;
         } sphere;
+        Mesh mesh;
     };
 } CollisionShape;
 
@@ -39,9 +41,14 @@ typedef struct {
 
 // Initiallize collision body
 void InitCollisionBody(CollisionBody *cb, Vector3 spawnPoint);
-// Reposition collision body in reference to new point
+// Reposition collision body in reference to transform 
 CollisionBody GetCollisionBodyTransformed(CollisionBody cb);
 // Check for collision between two collision bodies
 bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2);
+
+// Check for collision between mesh and sphere TODO: Add transform for mesh
+bool CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius);
+// Get closest point on a triangle to point p
+Vector3 ClosestPointOnTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c);
 
 #endif

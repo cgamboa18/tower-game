@@ -23,8 +23,9 @@ void InitGameObject(GameObject *go, Vector3 spawnPoint) {
     go->collisionBodyCount = 1; // TEST
     go->collisionBodies[0].mode = COLLIDE_BODY;
     go->collisionBodies[0].shapeCount = 1;
-    go->collisionBodies[0].shapes[0].type = SHAPE_BOX; 
-    go->collisionBodies[0].shapes[0].box = GetModelBoundingBox(go->model);
+    go->collisionBodies[0].shapes[0].type = SHAPE_SPHERE; 
+    go->collisionBodies[0].shapes[0].sphere.center = Vector3Zero();
+    go->collisionBodies[0].shapes[0].sphere.radius = 1.5f;
     /* TEST ***********************/
 }
 
@@ -56,8 +57,10 @@ void DrawGameObject(const GameObject *go) {
         BLUE 
     );
 
-    if (true)
-    DrawBoundingBox(GetCollisionBodyTransformed(go->collisionBodies[0]).shapes[0].box, RED);
+    if (true) {
+        CollisionBody b = GetCollisionBodyTransformed(go->collisionBodies[0]);
+        DrawSphereWires(b.shapes[0].sphere.center, b.shapes[0].sphere.radius, 10, 10, RED);
+    }
         
 }
 
@@ -69,12 +72,12 @@ void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, i
         // Check collision between player bodies and other game object bodies
         // GetCollisionBodyTransformed must be used to adjust for gameObject positions
         for (int j = 0; j < go->collisionBodyCount; j++) { 
-            CollisionBody body1 = GetCollisionBodyTransformed(go->collisionBodies[j]);
+            CollisionBody transformedBody1 = GetCollisionBodyTransformed(go->collisionBodies[j]);
 
             for (int k = 0; k < gameObjects[i]->collisionBodyCount; k++) {
-                CollisionBody body2 = GetCollisionBodyTransformed(gameObjects[i]->collisionBodies[k]);
+                CollisionBody transformedBody2 = GetCollisionBodyTransformed(gameObjects[i]->collisionBodies[k]);
 
-                if (CheckCollisionBodies(body1, body2)) {
+                if (CheckCollisionBodies(transformedBody1, transformedBody2)) {
                     CollisionCallback(go, gameObjects[i], j, k, ctx); 
                 }
             }

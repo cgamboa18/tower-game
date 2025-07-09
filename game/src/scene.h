@@ -5,15 +5,18 @@
 
 #include "player.h"
 #include "enemy.h"
+#include "surface.h"
 #include "game_object.h"
 
 #define MAX_ENEMIES 64 
+#define MAX_SURFACES 64
 #define MAX_GAME_OBJECTS 128
 
 typedef struct {
     Player player;
     Enemy enemies[MAX_ENEMIES];
     int enemyCount;
+    Surface surfaces;
 
     GameObject *gameObjects[MAX_GAME_OBJECTS]; 
     int gameObjectCount;

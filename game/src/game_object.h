@@ -9,6 +9,7 @@
 
 typedef enum {
     NONE_ID,
+    SURFACE_ID,
     PLAYER_ID,
     BEAST_ID
 } GameObjectId;
