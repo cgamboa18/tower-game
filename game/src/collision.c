@@ -32,20 +32,42 @@ CollisionBody GetCollisionBodyTransformed(CollisionBody cb) {
             case SHAPE_SPHERE:
                 cb.shapes[i].sphere.center = Vector3Add(cb.shapes[i].sphere.center, cb.transform.translation);
                 break;
-            /*
             case SHAPE_MESH:
-                // KEEP AN EYE ON THIS
-                for (int j = 0; j < cb.shapes[i].mesh.vertexCount; j++) {
-                    cb.shapes[i].mesh.vertices[j * 3 + 0] += cb.transform.translation.x; 
-                    cb.shapes[i].mesh.vertices[j * 3 + 1] += cb.transform.translation.y; 
-                    cb.shapes[i].mesh.vertices[j * 3 + 2] += cb.transform.translation.z; 
-                }
+                // Leave as static 
                 break;
-            */
         }
     } 
 
     return cb;
+}
+
+void ApplyTransformCollisionShapeMesh(CollisionShape *cs, Transform transform) {
+   if (cs->type != SHAPE_MESH) return;
+   Mesh *mesh = &cs->mesh; 
+    
+   if (mesh->vertices == NULL) return;
+
+    Matrix m = MatrixMultiply(
+        MatrixMultiply(MatrixScale(transform.scale.x, transform.scale.y, transform.scale.z),
+                       QuaternionToMatrix(transform.rotation)),
+        MatrixTranslate(transform.translation.x, transform.translation.y, transform.translation.z)
+    );
+
+    for (int i = 0; i < mesh->vertexCount; i++) {
+        Vector3 v = {
+            mesh->vertices[i * 3 + 0],
+            mesh->vertices[i * 3 + 1],
+            mesh->vertices[i * 3 + 2],
+        };
+
+        v = Vector3Transform(v, m);
+
+        mesh->vertices[i * 3 + 0] = v.x;
+        mesh->vertices[i * 3 + 1] = v.y;
+        mesh->vertices[i * 3 + 2] = v.z;
+    }
+
+    //UploadMesh(mesh, false);
 }
 
 bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2) {

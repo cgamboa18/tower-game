@@ -48,7 +48,7 @@ void DrawGameObject(const GameObject *go) {
     QuaternionToAxisAngle(go->transform.rotation, &rotationAxis, &rotationAngle);
 
     // Draw model to screen based on game object position
-    DrawModelWiresEx(
+    DrawModelEx(
         go->model,
         go->transform.translation,
         rotationAxis,
@@ -57,9 +57,17 @@ void DrawGameObject(const GameObject *go) {
         BLUE 
     );
 
-    if (true) {
+    bool debugCollision = true;
+    if (debugCollision) {
         CollisionBody b = GetCollisionBodyTransformed(go->collisionBodies[0]);
-        DrawSphereWires(b.shapes[0].sphere.center, b.shapes[0].sphere.radius, 10, 10, RED);
+
+        if (b.shapes[0].type == SHAPE_SPHERE) {
+            DrawSphereWires(b.shapes[0].sphere.center, b.shapes[0].sphere.radius, 10, 10, RED);
+        } else if (b.shapes[0].type == SHAPE_BOX) {
+            DrawBoundingBox(b.shapes[0].box, RED);
+        } else if (b.shapes[0].type == SHAPE_MESH) {
+            DrawModelWires(b.shapes[0].debugMeshModel, (Vector3) {0}, 1.0f, RED);
+        }
     }
         
 }

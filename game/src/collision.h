@@ -22,6 +22,7 @@ typedef struct {
         } sphere;
         Mesh mesh;
     };
+    Model debugMeshModel;
 } CollisionShape;
 
 // Determines behavior of CollisionBody
@@ -42,7 +43,9 @@ typedef struct {
 // Initiallize collision body
 void InitCollisionBody(CollisionBody *cb, Vector3 spawnPoint);
 // Reposition collision body in reference to transform 
-CollisionBody GetCollisionBodyTransformed(CollisionBody cb);
+CollisionBody GetCollisionBodyTransformed(CollisionBody cb); // TODO: Maybe find a better way
+// Transform a mesh-type collision body
+void ApplyTransformCollisionShapeMesh(CollisionShape *cs, Transform transform);
 // Check for collision between two collision bodies
 bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2);
 
