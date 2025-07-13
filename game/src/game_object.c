@@ -25,7 +25,7 @@ void InitGameObject(GameObject *go, Vector3 spawnPoint) {
     go->collisionBodies[0].shapeCount = 1;
     go->collisionBodies[0].shapes[0].type = SHAPE_SPHERE; 
     go->collisionBodies[0].shapes[0].sphere.center = Vector3Zero();
-    go->collisionBodies[0].shapes[0].sphere.radius = 1.5f;
+    go->collisionBodies[0].shapes[0].sphere.radius = 1.1f;
     /* TEST ***********************/
 }
 

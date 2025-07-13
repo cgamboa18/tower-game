@@ -93,11 +93,38 @@ void LoadScene(Scene *s, const char *fileName, bool preservePlayer) {
         s->enemyCount = enemyIndex;
     }
 
+    // Load Surfaces
+    cJSON *surfaces = cJSON_GetObjectItem(root, "surfaces");
+    if (surfaces && cJSON_IsArray(surfaces)) {
+        int surfaceIndex = 0;
+        cJSON *surfaceItem = NULL;
+
+        cJSON_ArrayForEach(surfaceItem, surfaces) {
+            if (surfaceIndex >= MAX_SURFACES) break;
+
+            cJSON *posArray = cJSON_GetObjectItem(surfaceItem, "position");
+            Vector3 pos = {0};
+
+            if (cJSON_GetArraySize(posArray) == 3) {
+                pos.x = (float)cJSON_GetArrayItem(posArray, 0)->valuedouble;
+                pos.y = (float)cJSON_GetArrayItem(posArray, 1)->valuedouble;
+                pos.z = (float)cJSON_GetArrayItem(posArray, 2)->valuedouble;
+            }
+
+            InitSurface(&s->surfaces[surfaceIndex], pos);
+            s->gameObjects[s->gameObjectCount++] = &s->surfaces[surfaceIndex].object;
+
+            surfaceIndex++;
+        }
+
+        s->surfaceCount = surfaceIndex;
+    }
+
     cJSON_Delete(root);
 
     /***************/
-    InitSurface(&s->surfaces, (Vector3){5,0,0}); 
-    s->gameObjects[s->gameObjectCount++] = &s->surfaces.object;
+    // InitSurface(&s->surfaces, (Vector3){5,0,0}); 
+    // s->gameObjects[s->gameObjectCount++] = &s->surfaces.object;
     /***************/
 }
 
