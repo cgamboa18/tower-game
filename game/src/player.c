@@ -22,10 +22,10 @@ void InitPlayer(Player *p, Vector3 spawnPoint) {
 }
 
 void UpdatePlayer(Player *p, GameObject **gameObjects, int gameObjectCount) {
-    // Update physics collisions for game object
+    // Update motion for game object
+    UpdateGameObjectMotion(&p->object, p->object.velocity);
+    // Update collisions for game object
     UpdateGameObjectSceneCollisions(&p->object, gameObjects, gameObjectCount, &PlayerCollisionCallback, p);
-    // Update physics motion for game object
-    UpdateGameObjectMotion(&p->object);
     // Update the players actions
     UpdatePlayerAction(p);
 }
@@ -133,7 +133,7 @@ void PlayerCollisionCallback(GameObject *object1, GameObject *object2, int colli
     Player *p = (Player *) ctx;
 
     if (object2->id == SURFACE_ID) {
-        p->object.velocity.y = 0;
+        CollideAndSlide(&p->object);
     }
 
     DrawText(TextFormat("Collision callback: %d", p->object.id), 10, 60, 10, DARKGRAY);

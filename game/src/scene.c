@@ -121,11 +121,6 @@ void LoadScene(Scene *s, const char *fileName, bool preservePlayer) {
     }
 
     cJSON_Delete(root);
-
-    /***************/
-    // InitSurface(&s->surfaces, (Vector3){5,0,0}); 
-    // s->gameObjects[s->gameObjectCount++] = &s->surfaces.object;
-    /***************/
 }
 
 void DrawSceneGameObjects(const Scene *s) {

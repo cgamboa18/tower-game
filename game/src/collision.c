@@ -67,7 +67,6 @@ void ApplyTransformCollisionShapeMesh(CollisionShape *cs, Transform transform) {
         mesh->vertices[i * 3 + 2] = v.z;
     }
 
-    UploadMesh(mesh, false);
 }
 
 bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2) {

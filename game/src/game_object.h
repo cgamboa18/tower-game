@@ -28,10 +28,13 @@ typedef struct {
 // Initiallize game object
 void InitGameObject(GameObject *go, Vector3 spawnPoint);
 // Update game object motion
-void UpdateGameObjectMotion(GameObject *go);
+void UpdateGameObjectMotion(GameObject *go, Vector3 velocity);
+
 // Draw 3D game object to camera view
 void DrawGameObject(const GameObject *go);
 // Update collisions for game object using parent's collision callback function (ctx contains parent pointer context for callback updates) 
 void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(GameObject*, GameObject*, int, int, void*), void *ctx);
+// Physics collision behavior (Assume that motion has been already been applied)
+void CollideAndSlide(GameObject *go);
 
 #endif

@@ -29,11 +29,9 @@ void InitGameObject(GameObject *go, Vector3 spawnPoint) {
     /* TEST ***********************/
 }
 
-void UpdateGameObjectMotion(GameObject *go) {
+void UpdateGameObjectMotion(GameObject *go, Vector3 velocity) {
     // Update position based on velocity
-    go->transform.translation.x += go->velocity.x;
-    go->transform.translation.y += go->velocity.y;
-    go->transform.translation.z += go->velocity.z;
+    go->transform.translation = Vector3Add(go->transform.translation, velocity);
 
     // Update collision body transforms to match game object
     for (int i = 0; i < go->collisionBodyCount; i++){
@@ -91,4 +89,13 @@ void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, i
             }
         }
     }
+}
+
+void CollideAndSlide(GameObject *go) {
+    Vector3 undoVelocity = Vector3Scale(go->velocity, -1);
+    undoVelocity.x = 0;
+    undoVelocity.z = 0;
+
+    UpdateGameObjectMotion(go, undoVelocity);
+    go->velocity.y = 0;
 }

@@ -13,7 +13,4 @@ void InitSurface(Surface *s, Vector3 position) {
     s->object.collisionBodies[0].shapes[0].mesh = s->object.collisionBodies[0].shapes[0].debugMeshModel.meshes[0];
 
     ApplyTransformCollisionShapeMesh(&s->object.collisionBodies[0].shapes[0], s->object.transform);
-
-    s->object.collisionBodies[0].shapes[0].debugMeshModel.meshes[0] = s->object.collisionBodies[0].shapes[0].mesh; 
-    UploadMesh(&s->object.collisionBodies[0].shapes[0].debugMeshModel.meshes[0], false);
 }
