@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <float.h>
 
 #include "raylib.h"
 #include "raymath.h"
@@ -69,7 +70,9 @@ void ApplyTransformCollisionShapeMesh(CollisionShape *cs, Transform transform) {
 
 }
 
-bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2) {
+CollisionInfo CheckCollisionBodies(CollisionBody body1, CollisionBody body2) {
+    CollisionInfo info = {0};
+    info.hit = false;
     for (int i = 0; i < body1.shapeCount; i++) {
         CollisionShape shape1 = body1.shapes[i];
 
@@ -77,37 +80,55 @@ bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2) {
             CollisionShape shape2 = body2.shapes[j];
 
             if (shape1.type == SHAPE_BOX && shape2.type == SHAPE_BOX) {
-                return CheckCollisionBoxes(shape1.box, shape2.box);
-            }
-            else if (shape1.type == SHAPE_SPHERE && shape2.type == SHAPE_BOX) {
-                return CheckCollisionBoxSphere(shape2.box, shape1.sphere.center, shape1.sphere.radius);
-            }
-            else if (shape1.type == SHAPE_BOX && shape2.type == SHAPE_SPHERE) {
-                return CheckCollisionBoxSphere(shape1.box, shape2.sphere.center, shape2.sphere.radius);
+                info.hit = CheckCollisionBoxes(shape1.box, shape2.box);
+                return info;
             }
             else if (shape1.type == SHAPE_SPHERE && shape2.type == SHAPE_SPHERE) {
-                return CheckCollisionSpheres(shape1.sphere.center, shape1.sphere.radius, shape2.sphere.center, shape2.sphere.radius);
+                info.hit = CheckCollisionSpheres(shape1.sphere.center, shape1.sphere.radius, shape2.sphere.center, shape2.sphere.radius);
+                return info;
             }
-            else if (shape1.type == SHAPE_MESH && shape2.type == SHAPE_SPHERE) {
-                return CheckCollisionMeshSphere(shape1.mesh, shape2.sphere.center, shape2.sphere.radius);
+            else if ((shape1.type == SHAPE_SPHERE && shape2.type == SHAPE_BOX) ||
+                     (shape1.type == SHAPE_BOX && shape2.type == SHAPE_SPHERE)) {
+
+                if (shape1.type == SHAPE_BOX)
+                    info.hit = CheckCollisionBoxSphere(shape1.box, shape2.sphere.center, shape2.sphere.radius);
+                else
+                    info.hit = CheckCollisionBoxSphere(shape2.box, shape1.sphere.center, shape1.sphere.radius);
+                return info;
             }
-            else if (shape1.type == SHAPE_SPHERE && shape2.type == SHAPE_MESH) {
-                return CheckCollisionMeshSphere(shape2.mesh, shape1.sphere.center, shape1.sphere.radius);
+            else if ((shape1.type == SHAPE_MESH && shape2.type == SHAPE_SPHERE) ||
+                     (shape1.type == SHAPE_SPHERE && shape2.type == SHAPE_MESH)) {
+
+                Mesh mesh;
+                Vector3 center;
+                float radius;
+                if (shape1.type == SHAPE_MESH) {
+                    info = CheckCollisionMeshSphere(shape1.mesh, shape2.sphere.center, shape2.sphere.radius);
+                } else {
+                    info = CheckCollisionMeshSphere(shape2.mesh, shape1.sphere.center, shape1.sphere.radius);
+                }
+                return info;
             }
         }
     }
-
-    return false;
+    return info;
 }
 
-bool CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius) {
-    if (mesh.vertices == NULL || mesh.triangleCount <= 0) return false;
+CollisionInfo CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius) {
+    CollisionInfo info = {0};
+    info.hit = false;
+    if (mesh.vertices == NULL || mesh.triangleCount <= 0) return info;
 
     Vector3 *vertices = (Vector3 *)mesh.vertices;
     short unsigned int *indices = mesh.indices;
+    Vector3 *normals = (Vector3 *)mesh.normals;
+
+    float minDist = FLT_MAX;
+    Vector3 closest = {0};
+    Vector3 bestNormal = {0};
 
     for (int i = 0; i < mesh.triangleCount; i++) {
-        Vector3 a, b, c;
+        Vector3 a, b, c, n;
 
         if (mesh.indices != NULL) {
             a = vertices[indices[i * 3 + 0]];
@@ -118,15 +139,23 @@ bool CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius) {
             b = vertices[i * 3 + 1];
             c = vertices[i * 3 + 2];
         }
+        n = Vector3Normalize(Vector3CrossProduct(Vector3Subtract(b, a), Vector3Subtract(c, a)));
 
         Vector3 closest = ClosestPointOnTriangle(center, a, b, c);
-        Vector3 difference = Vector3Subtract(center, closest);
-        float distance = Vector3Length(difference);
-
-        if (distance < radius) return true;
+        float distance = Vector3Distance(closest, center);
+        if (distance < minDist) {
+            minDist = distance;
+            bestNormal = n;
+        }
     }
 
-    return false;
+    if (minDist < radius) {
+        info.hit = true;
+        info.point = closest;
+        info.normal = bestNormal;
+        info.distance = radius - minDist;
+    }
+    return info;
 }
 
 Vector3 ClosestPointOnTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c) { // TODO: Check for optimization using pre calculated mesh elements

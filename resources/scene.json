@@ -1,6 +1,6 @@
 {
   "player": {
-    "position": [0, 0, 0],
+    "position": [5, 0, 5],
     "health": 75,
     "energy": 80
   },

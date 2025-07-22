@@ -129,11 +129,11 @@ Vector3 GetMoveDirection(Camera c) {
     return moveDirection;
 }
 
-void PlayerCollisionCallback(GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx) {
+void PlayerCollisionCallback(CollisionInfo collision, GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx) {
     Player *p = (Player *) ctx;
 
     if (object2->id == SURFACE_ID) {
-        CollideAndSlide(&p->object);
+        CollideAndSlide(&p->object, collision);
     }
 
     DrawText(TextFormat("Collision callback: %d", p->object.id), 10, 60, 10, DARKGRAY);

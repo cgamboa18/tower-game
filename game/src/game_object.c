@@ -70,7 +70,7 @@ void DrawGameObject(const GameObject *go) {
         
 }
 
-void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(GameObject*, GameObject*, int, int, void*), void *ctx) {
+void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(CollisionInfo, GameObject*, GameObject*, int, int, void*), void *ctx) {
     for (int i = 0; i < gameObjectCount; i++) {
         if (go == gameObjects[i])
             continue;
@@ -83,19 +83,38 @@ void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, i
             for (int k = 0; k < gameObjects[i]->collisionBodyCount; k++) {
                 CollisionBody transformedBody2 = GetCollisionBodyTransformed(gameObjects[i]->collisionBodies[k]);
 
-                if (CheckCollisionBodies(transformedBody1, transformedBody2)) {
-                    CollisionCallback(go, gameObjects[i], j, k, ctx); 
+                CollisionInfo collision = CheckCollisionBodies(transformedBody1, transformedBody2);
+                if (collision.hit == true) { // TODO: Add more collision info, j and k can be wrapped into collision 
+                    CollisionCallback(collision, go, gameObjects[i], j, k, ctx); 
                 }
             }
         }
     }
 }
 
-void CollideAndSlide(GameObject *go) {
-    Vector3 undoVelocity = Vector3Scale(go->velocity, -1);
-    undoVelocity.x = 0;
-    undoVelocity.z = 0;
+void CollideAndSlide(GameObject *go, CollisionInfo collision) {
+    UpdateGameObjectMotion(go, Vector3Negate(go->velocity));
 
-    UpdateGameObjectMotion(go, undoVelocity);
-    go->velocity.y = 0;
+    float dot = Vector3DotProduct(go->velocity, collision.normal);
+    Vector3 slideVelocity;
+    
+    // If we're moving into the surface (dot < 0)
+    if (dot < 0) {
+        // Remove only the component going into the surface
+        Vector3 normalVelocity = Vector3Scale(collision.normal, dot);
+        slideVelocity = Vector3Subtract(go->velocity, normalVelocity);
+    } else {
+        // Keep original velocity if we're moving away
+        slideVelocity = go->velocity;
+    }
+
+    // Apply slide movement
+    UpdateGameObjectMotion(go, slideVelocity);
+
+    // Update stored velocity for next frame
+    if (collision.normal.y > 0.7f) {
+        // On ground/floor - zero vertical velocity
+        slideVelocity.y = 0;
+    }
+    go->velocity = slideVelocity;
 }

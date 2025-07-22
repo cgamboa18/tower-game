@@ -5,6 +5,14 @@
 
 #define MAX_SHAPES 8
 
+// Contains information of collision
+typedef struct {
+    bool hit;
+    float distance;
+    Vector3 point;
+    Vector3 normal;
+} CollisionInfo;
+
 // Determines type of shape
 typedef enum {
     SHAPE_BOX,      // Bounding box (min, max)
@@ -47,10 +55,10 @@ CollisionBody GetCollisionBodyTransformed(CollisionBody cb); // TODO: Maybe find
 // Transform a mesh-type collision body
 void ApplyTransformCollisionShapeMesh(CollisionShape *cs, Transform transform);
 // Check for collision between two collision bodies
-bool CheckCollisionBodies(CollisionBody body1, CollisionBody body2);
+CollisionInfo CheckCollisionBodies(CollisionBody body1, CollisionBody body2);
 
 // Check for collision between mesh and sphere TODO: Add transform for mesh
-bool CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius);
+CollisionInfo CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius);
 // Get closest point on a triangle to point p
 Vector3 ClosestPointOnTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c);
 
