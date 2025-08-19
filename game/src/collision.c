@@ -119,18 +119,17 @@ CollisionInfo CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius) 
     info.hit = false;
     if (mesh.vertices == NULL || mesh.triangleCount <= 0) return info;
 
-    Vector3 *vertices = (Vector3 *)mesh.vertices;
-    short unsigned int *indices = mesh.indices;
-    Vector3 *normals = (Vector3 *)mesh.normals;
+    Vector3 *vertices = (Vector3 *) mesh.vertices;
+    unsigned short *indices = mesh.indices;
 
-    float minDist = FLT_MAX;
-    Vector3 closest = {0};
-    Vector3 bestNormal = {0};
+    float maxPenetration = -FLT_MAX;
+    Vector3 collisionNormalSum = {0};
+    Vector3 bestPoint = {0};
 
     for (int i = 0; i < mesh.triangleCount; i++) {
         Vector3 a, b, c, n;
 
-        if (mesh.indices != NULL) {
+        if (indices != NULL) {
             a = vertices[indices[i * 3 + 0]];
             b = vertices[indices[i * 3 + 1]];
             c = vertices[indices[i * 3 + 2]];
@@ -139,22 +138,40 @@ CollisionInfo CheckCollisionMeshSphere(Mesh mesh, Vector3 center, float radius) 
             b = vertices[i * 3 + 1];
             c = vertices[i * 3 + 2];
         }
+
+        // Triangle normal
         n = Vector3Normalize(Vector3CrossProduct(Vector3Subtract(b, a), Vector3Subtract(c, a)));
 
-        Vector3 closest = ClosestPointOnTriangle(center, a, b, c);
-        float distance = Vector3Distance(closest, center);
-        if (distance < minDist) {
-            minDist = distance;
-            bestNormal = n;
+        // Closest point on this triangle to the sphere center
+        Vector3 candidate = ClosestPointOnTriangle(center, a, b, c);
+        float dist = Vector3Distance(candidate, center);
+
+        if (dist <= radius) {
+            info.hit = true;
+
+            // Penetration depth measured along normal (signed distance to plane)
+            float signedDist = -Vector3DotProduct(Vector3Subtract(center, a), n);
+            float penetration = radius - signedDist;
+
+            if (penetration > 0) {
+                // Accumulate weighted normal
+                collisionNormalSum = Vector3Add(collisionNormalSum, Vector3Scale(n, penetration));
+
+                // Track deepest penetration for correction distance
+                if (penetration > maxPenetration) {
+                    maxPenetration = penetration;
+                    bestPoint = candidate;
+                }
+            }
         }
     }
 
-    if (minDist < radius) {
-        info.hit = true;
-        info.point = closest;
-        info.normal = bestNormal;
-        info.distance = radius - minDist;
+    if (info.hit) {
+        info.point = bestPoint;
+        info.normal = Vector3Normalize(collisionNormalSum);
+        info.distance =  maxPenetration;
     }
+
     return info;
 }
 

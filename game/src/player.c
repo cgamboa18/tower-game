@@ -116,7 +116,6 @@ Vector3 GetMoveDirection(Camera c) {
         forward.x
     });
 
-    // Accumulate movement input
     if (IsKeyDown(KEY_W)) moveDirection = Vector3Add(moveDirection, forward);
     if (IsKeyDown(KEY_S)) moveDirection = Vector3Subtract(moveDirection, forward);
     if (IsKeyDown(KEY_D)) moveDirection = Vector3Add(moveDirection, lateral);

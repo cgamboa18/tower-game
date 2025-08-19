@@ -36,7 +36,7 @@ void UpdatePlayerState(Player *p, Vector3 moveDirection);
 void UpdatePlayerCamera(Player *p);
 // Returns input movement direction as Vector3
 Vector3 GetMoveDirection(Camera c);
-// Callback function for registering collisions between player game objects
+// Callback function for registering collisions between player game objects (TODO: Wrap collision into ctx)
 void PlayerCollisionCallback(CollisionInfo collision, GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx);
 
 #endif

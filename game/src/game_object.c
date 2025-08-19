@@ -93,6 +93,8 @@ void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, i
 }
 
 void CollideAndSlide(GameObject *go, CollisionInfo collision) {
+    if (!collision.hit) return;
+
     UpdateGameObjectMotion(go, Vector3Negate(go->velocity));
 
     float dot = Vector3DotProduct(go->velocity, collision.normal);
