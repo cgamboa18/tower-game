@@ -64,7 +64,7 @@ void DrawGameObject(const GameObject *go) {
         } else if (b.shapes[0].type == SHAPE_BOX) {
             DrawBoundingBox(b.shapes[0].box, RED);
         } else if (b.shapes[0].type == SHAPE_MESH) {
-            DrawModelWires(b.shapes[0].debugMeshModel, b.transform.translation, 1.0f, RED);
+            DrawModelWires(b.shapes[0].debugMeshModel, b.transform.translation, 25.0f, RED); // Hardcoded scale, fix later
         }
     }
         
