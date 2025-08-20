@@ -128,7 +128,7 @@ Vector3 GetMoveDirection(Camera c) {
     return moveDirection;
 }
 
-void PlayerCollisionCallback(CollisionInfo collision, GameObject *object1, GameObject *object2, int collisionBodyIdx1, int collisionBodyIdx2, void *ctx) {
+void PlayerCollisionCallback(CollisionInfo collision, GameObject *object1, GameObject *object2, void *ctx) {
     Player *p = (Player *) ctx;
 
     if (object2->id == SURFACE_ID) {

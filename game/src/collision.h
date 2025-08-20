@@ -11,6 +11,9 @@ typedef struct {
     float distance;
     Vector3 point;
     Vector3 normal;
+
+    int bodyIndexSelf;
+    int bodyIndexExtern;
 } CollisionInfo;
 
 // Determines type of shape

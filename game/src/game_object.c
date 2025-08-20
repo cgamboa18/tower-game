@@ -70,7 +70,7 @@ void DrawGameObject(const GameObject *go) {
         
 }
 
-void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(CollisionInfo, GameObject*, GameObject*, int, int, void*), void *ctx) {
+void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, int gameObjectCount, void (*CollisionCallback)(CollisionInfo, GameObject*, GameObject*, void*), void *ctx) {
     for (int i = 0; i < gameObjectCount; i++) {
         if (go == gameObjects[i])
             continue;
@@ -84,8 +84,11 @@ void UpdateGameObjectSceneCollisions(GameObject *go, GameObject **gameObjects, i
                 CollisionBody transformedBody2 = GetCollisionBodyTransformed(gameObjects[i]->collisionBodies[k]);
 
                 CollisionInfo collision = CheckCollisionBodies(transformedBody1, transformedBody2);
-                if (collision.hit == true) { // TODO: Add more collision info, j and k can be wrapped into collision 
-                    CollisionCallback(collision, go, gameObjects[i], j, k, ctx); 
+                collision.bodyIndexSelf = j;
+                collision.bodyIndexExtern = k;
+
+                if (collision.hit == true) { // TODO: Add more collision info
+                    CollisionCallback(collision, go, gameObjects[i], ctx); 
                 }
             }
         }
