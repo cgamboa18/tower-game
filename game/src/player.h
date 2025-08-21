@@ -32,10 +32,12 @@ void UpdatePlayer(Player *p, GameObject **gameObjects, int gameObjectCount);
 void UpdatePlayerAction(Player *p);
 // Main player update function
 void UpdatePlayerState(Player *p, Vector3 moveDirection);
+
 // Update player camera
 void UpdatePlayerCamera(Player *p);
 // Returns input movement direction as Vector3
 Vector3 GetMoveDirection(Camera c);
+
 // Callback function for registering collisions between player game objects (TODO: Wrap collision into ctx)
 void PlayerCollisionCallback(CollisionInfo collision, GameObject *object1, GameObject *object2, void *ctx);
 

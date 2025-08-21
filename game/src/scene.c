@@ -9,6 +9,10 @@
 
 void UpdateScene(Scene *s) {
     UpdatePlayer(&s->player, s->gameObjects, s->gameObjectCount);
+
+    for (int i = 0; i < s->enemyCount; i++) {
+        UpdateEnemy(&s->enemies[i], &s->player, s->gameObjects, s->gameObjectCount);
+    }
 }
 
 void LoadScene(Scene *s, const char *fileName, bool preservePlayer) {
